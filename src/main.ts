@@ -4,12 +4,44 @@ import { bootstrapExtra } from "@workadventure/scripting-api-extra";
 
 console.log('Script started successfully');
 
+let noteWebsite: any;
+
 let currentPopup: any = undefined;
 
 // Waiting for the API to be ready
 WA.onInit().then(() => {
     console.log('Scripting API ready');
     console.log('Player tags: ',WA.player.tags)
+
+    // Julia custom notes test
+    console.log("Entering visibleNote layer");
+
+    WA.room.onEnterLayer("visibleNote").subscribe(async () => {
+        console.log("Entering visibleNote layer");
+
+        noteWebsite = await WA.ui.website.open({
+            url: "./note.html",
+            position: {
+                vertical: "top",
+                horizontal: "middle",
+            },
+            size: {
+                height: "30vh",
+                width: "50vw",
+            },
+            margin: {
+                top: "10vh",
+            },
+            allowApi: true,
+        });
+
+    });
+
+    WA.room.onLeaveLayer("visibleNote").subscribe(() => {
+        noteWebsite.close();
+    });
+
+
 
     WA.room.area.onEnter('clock').subscribe(() => {
         const today = new Date();
